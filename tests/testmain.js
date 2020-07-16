@@ -26,6 +26,7 @@ exports.testBasics = {
 	}
 };
 
+
 /**
  * test basic expressions
  * @param test
@@ -42,4 +43,31 @@ exports.testBasic = function(test){
  */
 exports.testBatch = function(test){
 	cf.autoTest(test, new BigEval());
+};
+
+
+
+exports.testRoots = {
+	testCustomRoot: function(test) {
+		global.defaultRootFn = function() { return 11; };
+		var b = new BigEval({customRootFn: function() { return 22; }});
+
+		test.equals(22, b.exec("customRootFn()"));
+		test.equals("ERROR", b.exec("defaultRootFn()"));
+		test.done();
+	},
+
+	testDefaultRoot: function(test) {
+		global.defaultRootFn = function() { return 11; };
+		var b = new BigEval();
+		test.equals(11, b.exec("defaultRootFn()"));
+		test.done();
+	},
+
+	testPrototypeFn: function(test) {
+		BigEval.prototype.pf = function() { return 2; };
+		var b = new BigEval({ foo: () => 2 });
+		test.equals(2, b.exec("pf()"));
+		test.done();
+	}
 };

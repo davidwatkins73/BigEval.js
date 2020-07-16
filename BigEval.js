@@ -4,8 +4,6 @@
 	https://github.com/aviaryan/bigEval.js
 */
 
-var root = Function('return this')();
-
 /**
  * @enum {string}
  * @readonly
@@ -22,11 +20,11 @@ var TokenType = {
 	COMMA: ','
 };
 
-var hasOwnProperty = Object.hasOwnProperty;
-
 var DEFAULT_VAR_NAME_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$';
 
-var BigEval = function() {
+var BigEval = function(root = Function('return this')()) {
+
+	this.root = root;
 
 	// https://en.wikipedia.org/wiki/Order_of_operations#Programming_languages
 
@@ -729,8 +727,8 @@ BigEval.prototype._evaluateFunction = function (token) {
 	else if (typeof(Math[fname]) == 'function') {
 		return Math[fname].apply(Math, args);
 	}
-	else if (typeof(root[fname]) == 'function') {
-		return root[fname].apply(root, args);
+	else if (typeof(this.root[fname]) == 'function') {
+		return this.root[fname].apply(this.root, args);
 	}
 
 	throw new Error('Function named "' + fname + '" was not found');
